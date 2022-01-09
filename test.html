@@ -1,0 +1,43 @@
+<html>
+<head>
+    <script src="<?php echo Yii::app()->theme->baseUrl; ?>/views/scripts/jquery.js"></script>
+</head>
+    <body OnLoad=OnLoadEvent();>
+        <form name="downloadForm" action="<?php echo $ACSUrl; ?>" method="POST">
+            <input type="hidden" name="creq" value="<?php echo $CReq; ?>">
+        </form>
+        <form name="termForm" action="<?php echo $TermUrl; ?>" method="POST">
+            <input type="hidden" name="cres" value="<?php echo $CReq; ?>">
+        </form>
+
+        <script language="Javascript">
+            let ACSUrl = "<?php echo $ACSUrl; ?>";
+
+            async function postData(url = '', data = {}) {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    mode: 'no-cors', // no-cors, *cors, same-origin
+                    cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+                    credentials: 'same-origin', // include, *same-origin, omit
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    redirect: 'follow', // manual, *follow, error
+                    referrerPolicy: 'no-referrer', // no-referrer, *client
+                    body: data // body data type must match "Content-Type" header
+                });
+                return await response.text();
+            }
+
+            postData('<?php echo $threeDSMethodUrl; ?>', 'threeDSMethodData=<?php echo $threeDSMethodData; ?>')
+                .then(function (text) {
+                    console.log('Request successful', text);
+                    if (ACSUrl != '') {
+                        document.downloadForm.submit();
+                    } else {
+                        document.termForm.submit();
+                    }
+                });
+        </script>
+    </body>
+</html>
